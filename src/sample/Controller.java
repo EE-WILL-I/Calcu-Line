@@ -125,7 +125,14 @@ public class Controller implements Initializable {
             System.out.println("selected: " + selectedLine.index);
         }
     }
-    public IOLine getSelected() {return selectedLine;}
+    public boolean setSelected(int index) {
+        if(index >= 0 && index < IOLineList.size()) {
+            setSelected(IOLineList.get(index));
+            return true;
+        }
+        return false;
+    }
+    public IOLine getSelected() { return selectedLine; }
 
     public void init() {
         IOLine line = addLine(0);

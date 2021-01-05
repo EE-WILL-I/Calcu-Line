@@ -28,11 +28,12 @@ public class IOLine {
         input.setStyle(tfStyle + "-fx-pref-width:" + tfWidth + "px;");
         input.setPromptText("Enter operation..");
         input.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent e) -> {
-            if (KeyCode.ENTER == e.getCode()) {
-                Controller.CONTROLLER.addLine(this.index + 1);
-            }
-            else if(KeyCode.BACK_SPACE == e.getCode()) {
-                if(input.getText().isEmpty()) Controller.CONTROLLER.deleteLine(this);
+            switch (e.getCode()) {
+                case ENTER: { Controller.CONTROLLER.addLine(this.index + 1); break; }
+                case BACK_SPACE: { if(input.getText().isEmpty()) Controller.CONTROLLER.deleteLine(this); break; }
+                case DOWN: { Controller.CONTROLLER.setSelected(Controller.CONTROLLER.getSelected().getLineIndex() + 1); break; }
+                case UP: { Controller.CONTROLLER.setSelected(Controller.CONTROLLER.getSelected().getLineIndex() - 1); break; }
+                default: break;
             }
         });
         input.setOnMouseClicked(event ->  {
