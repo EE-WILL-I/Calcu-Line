@@ -53,7 +53,6 @@ public class IOLine {
         this.index = index;
         lineNum.setText(Integer.toString(index));
     }
-
     void setResult(String out) {
         result.setText(out);
     }
@@ -67,5 +66,9 @@ public class IOLine {
     }
     TextField getTF(){
         return input;
+    }
+    void clear() {
+        input.clear();
+        result.setText("0");
     }
 }

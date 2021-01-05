@@ -1,11 +1,13 @@
 package sample;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class QuerySequence {
     protected enum QueryType{
         Statement,
-        Operation
+        Operation,
+        Function
     }
     protected enum StatementType {
         Const,
@@ -94,59 +96,116 @@ public class QuerySequence {
     }
     public static class Operation extends Query {
 
-        private Computer.Func type;
+        private Computer.Operations type;
         private int priority;
         public boolean isChecked = false;
-        Operation(Computer.Func f) {
+        Operation(Computer.Operations f) {
             setType(f);
             queryType = QueryType.Operation;
             value = type.toString();
         }
-        public void setType(Computer.Func f) {
+        public void setType(Computer.Operations f) {
             switch (f) {
                 case sum:
                 {
-                    type = Computer.Func.sum;
+                    type = Computer.Operations.sum;
                     priority = 1;
                     break;
                 }
                 case sub:
                 {
-                    type = Computer.Func.sub;
+                    type = Computer.Operations.sub;
                     priority = 1;
                     break;
                 }
                 case mult:
                 {
-                    type = Computer.Func.mult;
+                    type = Computer.Operations.mult;
                     priority = 2;
                     break;
                 }
                 case div:
                 {
-                    type = Computer.Func.div;
+                    type = Computer.Operations.div;
                     priority = 2;
                     break;
                 }
                 case opInc:
                 {
-                    type = Computer.Func.opInc;
-                    priority = 2;
+                    type = Computer.Operations.opInc;
+                    priority = 3;
                     break;
                 }
                 case opDec:
                 {
-                    type = Computer.Func.opDec;
-                    priority = 2;
+                    type = Computer.Operations.opDec;
+                    priority = 3;
+                    break;
+                }
+                case power: {
+                    type = Computer.Operations.power;
+                    priority = 3;
                     break;
                 }
                 default: break;
             }
         }
-        public Computer.Func getType() { return type; }
+        public Computer.Operations getType() { return type; }
         public int getPriority() { return priority; }
         public void setPriority(int priority) { this.priority = priority; }
         public void addPriority(int priority) { this.priority += priority; }
+    }
+    public static class Function extends Query {
+        private Computer.Functions fType;
+        ArrayList<Statement> args;
+        Function(Statement arg, Computer.Functions fType) {
+            this.args.add(arg);
+            this.fType = fType;
+            queryType = QueryType.Function;
+        }
+        Function(String val) {
+            setValue(val);
+            queryType = QueryType.Function;
+        }
+        public ConstStatement execute() {
+            switch (fType) {
+                case root: {
+                    if (args.get(0).getClass() == ConstStatement.class)
+                        return new ConstStatement(Math.sqrt((Double) args.get(0).getValue()));
+                    return new ConstStatement(0);
+                }
+                case lg: {
+                    if (args.get(0).getClass() == ConstStatement.class)
+                        return new ConstStatement(Math.log10((Double) args.get(0).getValue()));
+                    return new ConstStatement(0);
+
+                }
+                default:
+                    break;
+            }
+            return new ConstStatement(0);
+        }
+        public void setArgs(ArrayList<Statement> args) {
+            this.args = args;
+        }
+        public  void addArg(Statement s) {
+            args.add(s);
+        }
+        public boolean setValue(Object val) {
+            if(val.getClass() == String.class) {
+                setFType(Reader.READER.funcs.get((String)val));
+                value = (String)val;
+                return true;
+            }
+            if(val.getClass() == double.class) {
+                value = new ConstStatement((Double)val);
+                return true;
+            }
+            return false;
+        }
+        public void setFType(Computer.Functions fType) {
+            this.fType = fType;
+        }
     }
 
     private ArrayList<Query> QS = new ArrayList<Query>();
@@ -160,6 +219,16 @@ public class QuerySequence {
     public boolean addQuery(Query q) {
         try {
             QS.add(q);
+            return true;
+        }
+        catch (NullPointerException e) {
+            System.out.println("Null query: " + q.value.toString());
+            return false;
+        }
+    }
+    public boolean addQuery(int pos, Query q) {
+        try {
+            QS.set(pos, q);
             return true;
         }
         catch (NullPointerException e) {

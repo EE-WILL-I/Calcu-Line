@@ -35,7 +35,7 @@ public class Controller implements Initializable {
     }
 
     public void onClearBtnPressed() {
-        if((IOLine)IOLineList.toArray()[0] == selectedLine) selectedLine.getTF().clear();
+        if((IOLine)IOLineList.toArray()[0] == selectedLine) selectedLine.clear();
         deleteLine(selectedLine);
     }
     public IOLine addLine(int index) {
