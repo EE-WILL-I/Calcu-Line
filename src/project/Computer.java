@@ -36,6 +36,12 @@ public class Computer extends QuerySequence {
         }
 
         public Query compute() {
+//            if (vLeft.getClass() == String.class && vRight.getClass() == Double.class) {
+//                vLeft = 0d;
+//            }
+//            else if (vLeft.getClass() == Double.class && vRight.getClass() == String.class) {
+//                vRight = 0d;
+//            }
             if (vLeft.getClass() == Double.class && vRight.getClass() == Double.class) {
                 double v1, v2;
                 v1 = (double) vLeft;
@@ -59,29 +65,10 @@ public class Computer extends QuerySequence {
                     default:
                         return new Query();
                 }
-            } else if (vLeft.getClass() == String.class && vRight.getClass() == String.class) {
-                /*String v1, v2;
-                v1 = (String) vLeft;
-                v2 = (String) vRight;
-                switch (opType) {
-                    case sum: {
-                        return new QuerySequence.VarStatement(v1 + "+" + v2);
-                    }
-                    case sub: {
-                        return new QuerySequence.VarStatement(v1 + "-" + v2);
-                    }
-                    case mult: {
-                        return new QuerySequence.VarStatement(v1 + "*" + v2);
-                    }
-                    case div: {
-                        return new QuerySequence.VarStatement(v1 + "/" + v2);
-                    }
-                    default:
-                        return new Query();
-                }*/
-                return new Query();
             }
-            return new Query();
+            else {
+                return new VarStatement(vLeft.toString() + vRight.toString());
+            }
         }
     }
 
@@ -98,6 +85,7 @@ public class Computer extends QuerySequence {
 
         funcs.put(Functions.root, "sqrt");
         funcs.put(Functions.lg, "lg");
+        funcs.put(Functions.log, "log");
 
         if (COMPUTER == null) {
             COMPUTER = this;
@@ -116,23 +104,25 @@ public class Computer extends QuerySequence {
     }
     public enum Functions {
         root,
-        lg
+        lg,
+        log,
+        ln
     }
     public Map<Operations, String> signs = new HashMap<Operations, String>();
     public Map<Functions, String> funcs = new HashMap<Functions, String>();
-    private final int iterationLim = 20;
+    private final int MAX_ITERATION_COUNT = 20;
 
     public String computeQuerySequence(QuerySequence querySequence) {
-       QuerySequence QS = querySequence;
-       int loopSaver = 0;
-        while(QS.getSequence().size() > 1) {
-            if(loopSaver > iterationLim) break;
-            QS = computeStep(QS);
-            loopSaver++;
+        int curIt = 1;
+        while(querySequence.getSequence().size() > 1) {
+            System.out.println("Iteration: " + curIt);
+            querySequence = computeStep(querySequence);
+            curIt++;
+            if(curIt > MAX_ITERATION_COUNT) break;
         }
 
         StringBuilder out = new StringBuilder();
-        for(Object q: QS.getSequence()) {
+        for(Object q: querySequence.getSequence()) {
             if(q.getClass() == QuerySequence.ConstStatement.class) out.append(((((Query) q).getValue())));
             else if(q.getClass() == QuerySequence.ParamStatement.class) out.append(((((Query) q).getValue())));
             else if(q.getClass() == QuerySequence.VarStatement.class) out.append((String) (((VarStatement) q).getValue()));
@@ -149,7 +139,7 @@ public class Computer extends QuerySequence {
         Operation mostPriorityOperation = getMostPriorityOperation(operations);
 
         ConstStatement opRes = new QuerySequence.ConstStatement(mostPriorityOperation.compute());
-        replace(querySequence, mostPriorityOperation.queries, opRes);
+        querySequence = replace(querySequence, mostPriorityOperation.queries, opRes);
         return querySequence;
     }
 
@@ -208,8 +198,8 @@ public class Computer extends QuerySequence {
     }
     private QuerySequence executeFunctionQueries(QuerySequence sequence) {
         ArrayList<Query> QS = sequence.getSequence();
-        QuerySequence args = new QuerySequence();
         for(int i = 0; i < QS.size(); i++) {
+            QuerySequence args = new QuerySequence();
             int j = 0;
             if(QS.get(i).queryType == QueryType.Function) {
                 if(QS.get(i + 1).queryType == QueryType.Operator && ((Operator)QS.get(i + 1)).getType() == Operations.opInc) {

@@ -8,7 +8,7 @@
    <children>
       <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="372.0" prefWidth="568.0" style="-fx-background-color: #1e1e1e;">
          <children>
-            <ScrollPane layoutY="58.0" prefHeight="305.0" prefWidth="568.0" style="-fx-background-color: #1e1e1e;">
+            <ScrollPane layoutY="47.0" prefHeight="305.0" prefWidth="568.0" style="-fx-background-color: #1e1e1e;">
                <content>
                   <VBox fx:id="vBox_inputArray" prefHeight="303.0" prefWidth="566.0" style="-fx-background-color: #1e1e1e; -fx-border-color: #ffe712;">
                      <children>
@@ -34,13 +34,19 @@
                      </children></VBox>
                </content>
             </ScrollPane>
-            <Button fx:id="btn_compute" layoutX="492.0" layoutY="26.0" mnemonicParsing="false" onAction="#onComputeBtnPressed" style="-fx-background-color: #1e1e1e; -fx-border-color: #ffe712;" text="Compute" textFill="#ffe712" />
-            <Button fx:id="btn_clear" layoutX="404.0" layoutY="26.0" mnemonicParsing="false" onAction="#onClearBtnPressed" prefHeight="24.0" prefWidth="62.0" style="-fx-background-color: #1e1e1e; -fx-border-color: #ffe712;" text="Clear" textFill="#ffe712" />
-            <Label layoutX="14.0" layoutY="26.0" prefHeight="24.0" prefWidth="81.0" text="Input field:" textFill="#ffe712">
+            <Button fx:id="btn_compute" layoutX="492.0" layoutY="15.0" mnemonicParsing="false" onAction="#onComputeBtnPressed" style="-fx-background-color: #1e1e1e; -fx-border-color: #ffe712;" text="Compute" textFill="#ffe712" />
+            <Button fx:id="btn_clear" layoutX="404.0" layoutY="15.0" mnemonicParsing="false" onAction="#onClearBtnPressed" prefHeight="24.0" prefWidth="62.0" style="-fx-background-color: #1e1e1e; -fx-border-color: #ffe712;" text="Clear" textFill="#ffe712" />
+            <Label fx:id="lbl_info0" layoutX="14.0" layoutY="15.0" prefHeight="24.0" prefWidth="81.0" text="Input field:" textFill="#ffe712">
                <font>
                   <Font size="16.0" />
                </font>
             </Label>
+            <Label fx:id="lbl_info1" alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="357.0" prefHeight="24.0" prefWidth="568.0" text="Use &quot;$N&quot; to get value from line &quot;N&quot;" textAlignment="CENTER" textFill="#ffe712">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Button fx:id="btn_settings" layoutX="315.0" layoutY="15.0" mnemonicParsing="false" onAction="#onSettingsBtnPressed" prefHeight="24.0" prefWidth="62.0" style="-fx-background-color: #1e1e1e; -fx-border-color: #ffe712;" text="settings" textFill="#ffe712" />
          </children>
       </AnchorPane>
    </children>

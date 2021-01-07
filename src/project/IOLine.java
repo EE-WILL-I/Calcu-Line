@@ -14,7 +14,7 @@ public class IOLine {
     private String lblStyle = "-fx-border-color:#1e1e1e; -fx-text-fill:#1e1e1e; -fx-font-size:14px; -fx-pref-height:30px;",
             tfStyle = "-fx-background-color: #ffe712; -fx-border-color:#1e1e1e; -fx-font-size:14px; -fx-pref-height:30px;";
     private int tfWidth = 400, lineWidth = 524;
-    int index;
+    private int index;
     Node[] childrenList = {lineNum, input, result};
 
     IOLine(int index) {

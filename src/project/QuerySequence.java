@@ -166,7 +166,7 @@ public class QuerySequence {
     public static class Function extends Query {
         private Computer.Functions fType;
         private boolean isNegative = false;
-        ArrayList<Statement> args = new ArrayList<Statement>();
+        ArrayList<Statement> args = new ArrayList<Statement>(), parameters = new ArrayList<Statement>();
         Function(Statement arg, Computer.Functions fType) {
             this.args.add(arg);
             this.fType = fType;
@@ -174,6 +174,11 @@ public class QuerySequence {
         }
         Function(String val) {
             setValue(val);
+            queryType = QueryType.Function;
+        }
+        Function(String val, Statement param) {
+            setValue(val);
+            parameters.add(param);
             queryType = QueryType.Function;
         }
         public ConstStatement execute() {
@@ -188,6 +193,13 @@ public class QuerySequence {
                         result = Math.log10((Double) args.get(0).getValue());
                         break;
                     }
+                    case ln: {
+                        result = Math.log((Double) args.get(0).getValue());
+                        break;
+                    }
+                    case log: {
+                        result = Math.log((Double) args.get(0).getValue()) / Math.log((Double)parameters.get(0).getValue());
+                    }
                     default:
                         break;
                 }
@@ -198,6 +210,9 @@ public class QuerySequence {
         }
         public  void addArg(Statement s) {
             args.add(s);
+        }
+        public void addParam(Statement param) {
+            parameters.add(param);
         }
         public boolean setValue(Object val) {
             if(val.getClass() == String.class) {

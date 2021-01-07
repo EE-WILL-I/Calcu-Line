@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class Reader implements Initializable {
+public class Reader {
     public static Reader READER;
 
     public Map<String, Computer.Operations> signs = new HashMap<String, Computer.Operations>();
@@ -25,6 +25,14 @@ public class Reader implements Initializable {
 
         funcs.put("sqrt", Computer.Functions.root);
         funcs.put("lg", Computer.Functions.lg);
+        funcs.put("ln", Computer.Functions.ln);
+        funcs.put("log", Computer.Functions.log);
+
+        XMLReader reader = new XMLReader();
+        if(reader.readXMLConfig()) {
+            PARAM_CHAR = reader.getParameterById("1");
+            FUNC_PARAM_CHARS = reader.getParameterById("2");
+        }
 
         if (READER == null) {
             READER = this;
@@ -34,14 +42,15 @@ public class Reader implements Initializable {
     }
     private Computer computer = new Computer();
     private ArrayList<IOLine> inputLines = new ArrayList<IOLine>();
-    private final String PARAMCHAR = "\\$";
+    private String PARAM_CHAR, FUNC_PARAM_CHARS;
+    private int currentIOLIne = 0;
 
     public void read(ArrayList<IOLine> inputLines) {
         this.inputLines = inputLines;
-        for(int i = 0; i < inputLines.size(); i++)
-            if(!((IOLine)inputLines.toArray()[i]).getTF().getText().isEmpty()) {
-                String result = Computer.COMPUTER.computeQuerySequence(readLine((IOLine)this.inputLines.toArray()[i]));
-                Controller.CONTROLLER.IOLineList.get(i).setResult(result);
+        for(currentIOLIne = 0; currentIOLIne < inputLines.size(); currentIOLIne++)
+            if(!((IOLine)inputLines.toArray()[currentIOLIne]).getTF().getText().isEmpty()) {
+                String result = Computer.COMPUTER.computeQuerySequence(readLine(this.inputLines.get(currentIOLIne)));
+                Controller.CONTROLLER.IOLineList.get(currentIOLIne).setResult(result);
                 System.out.println("RESULT: " + result);
             }
     }
@@ -77,17 +86,34 @@ public class Reader implements Initializable {
                 }
                 i--;
                 if(_buffer.length() > 0 && funcs.containsKey(_buffer.toString())) {
-                    QS.addQuery(new QuerySequence.Function(_buffer.toString()));
+                    StringBuilder fParam = new StringBuilder();
+                    if(data.charAt(i + 1) == FUNC_PARAM_CHARS.charAt(0)) {
+                        i+=2;
+                        for (int j = i; j < data.length() && data.charAt(j) != FUNC_PARAM_CHARS.charAt(1); j++) {
+                            fParam.append(data.charAt(j));
+                            i++;
+                        }
+                    }
+                    if(fParam.length() > 0) QS.addQuery(new QuerySequence.Function(_buffer.toString(), new QuerySequence.ConstStatement(Double.parseDouble(fParam.toString()))));
+                    else QS.addQuery(new QuerySequence.Function(_buffer.toString()));
                     continue;
                 }
                 else QS.addQuery(new QuerySequence.VarStatement(c));
                 continue;
             }
-            if(c.matches(PARAMCHAR)) {
+            if(c.matches(PARAM_CHAR)) {
                 String c0 = Character.toString(data.charAt(i + 1));
                 if(c0.matches("\\d")) {
-                    QuerySequence.ParamStatement q = new QuerySequence.ParamStatement(Integer.parseInt(c0));
-                    q.setValue(Double.parseDouble(Controller.CONTROLLER.IOLineList.get(q.refIndex).getResult()));
+                    int ind = Integer.parseInt(c0);
+                    QuerySequence.ParamStatement q;
+                    if(ind >= 0 && ind <= this.inputLines.get(currentIOLIne).getLineIndex()) {
+                        q = new QuerySequence.ParamStatement(ind);
+                        q.setValue(Double.parseDouble(Controller.CONTROLLER.IOLineList.get(q.refIndex).getResult()));
+                    }
+                    else {
+                        q = new QuerySequence.ParamStatement(-1);
+                        q.setValue(0d);
+                    }
                     QS.addQuery(q);
                     i++;
                 }
@@ -129,25 +155,21 @@ public class Reader implements Initializable {
                 String data = line.getTF().getText();
                 for (int i = 0; i < data.length(); i++) {
                     String c = Character.toString(data.charAt(i));
-                    if (c.matches(PARAMCHAR)) {
+                    if (c.matches(PARAM_CHAR)) {
                         String c0 = Character.toString(data.charAt(i + 1));
                         if (c0.matches("\\d")) {
                             int newInd = Integer.parseInt(c0);
                             if(newInd >= index) {
                                 newInd += bias;
-                                data = data.replaceAll(PARAMCHAR + c0, "&" + Integer.toString(newInd));
+                                data = data.replaceAll(PARAM_CHAR + c0, "&" + Integer.toString(newInd));
                             }
                         }
                     }
                 }
-                data = data.replaceAll("&", PARAMCHAR);
+                data = data.replaceAll("&", PARAM_CHAR);
                 inputLines_upt.get(ind).getTF().setText(data);
             }
         }
         return inputLines_upt;
-    }
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
     }
 }

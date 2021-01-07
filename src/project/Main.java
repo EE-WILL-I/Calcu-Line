@@ -23,11 +23,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("UI.fxml"));
         Parent root = loader.load();
 
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("sample.fxml").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("UI.fxml").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("Calcu-Line");
         //primaryStage.getIcons().add(new Image("sample/translator_icon.png"));

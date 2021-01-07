@@ -1,10 +1,12 @@
 package project;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.awt.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -22,6 +24,8 @@ public class Controller implements Initializable {
 
     @FXML
     public VBox vBox_inputArray;
+    @FXML
+    public Label lbl_param0, lbl_param1;
     public ArrayList<IOLine> IOLineList = new ArrayList<IOLine>();
     private IOLine selectedLine;
     private Reader reader;
@@ -35,6 +39,9 @@ public class Controller implements Initializable {
     public void onClearBtnPressed() {
         if((IOLine)IOLineList.toArray()[0] == selectedLine) selectedLine.clear();
         deleteLine(selectedLine);
+    }
+    public void onSettingsBtnPressed() {
+
     }
     public IOLine addLine(int index) {
         if(IOLineList.size() < maxIOLineCount) {
@@ -92,8 +99,8 @@ public class Controller implements Initializable {
                 }
             }
             IOLineList = tmp;
-            System.out.println("deleted line: " + selectedLine.index);
-            setSelected((IOLine)IOLineList.toArray()[selectedLine.index - 1]);
+            System.out.println("deleted line: " + selectedLine.getLineIndex());
+            setSelected((IOLine)IOLineList.toArray()[selectedLine.getLineIndex() - 1]);
             IOLineList = reader.updateParams(IOLineList, index, -1);
         }
     }
@@ -120,7 +127,7 @@ public class Controller implements Initializable {
             selectedLine = line;
             line.getTF().requestFocus();
             line.getTF().positionCaret(line.getTF().getText().length());
-            System.out.println("selected: " + selectedLine.index);
+            System.out.println("selected: " + selectedLine.getLineIndex());
         }
     }
     public boolean setSelected(int index) {
@@ -140,4 +147,5 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         reader = new Reader();
     }
+
 }
