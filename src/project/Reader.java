@@ -34,13 +34,16 @@ public class Reader implements Initializable {
     }
     private Computer computer = new Computer();
     private ArrayList<IOLine> inputLines = new ArrayList<IOLine>();
-    private final String PARAMCHAR = "%";
+    private final String PARAMCHAR = "\\$";
 
     public void read(ArrayList<IOLine> inputLines) {
         this.inputLines = inputLines;
         for(int i = 0; i < inputLines.size(); i++)
-            if(!((IOLine)inputLines.toArray()[i]).getTF().getText().isEmpty())
-               Controller.CONTROLLER.IOLineList.get(i).setResult(Computer.COMPUTER.computeQuerySequence(readLine((IOLine)this.inputLines.toArray()[i])));
+            if(!((IOLine)inputLines.toArray()[i]).getTF().getText().isEmpty()) {
+                String result = Computer.COMPUTER.computeQuerySequence(readLine((IOLine)this.inputLines.toArray()[i]));
+                Controller.CONTROLLER.IOLineList.get(i).setResult(result);
+                System.out.println("RESULT: " + result);
+            }
     }
     private  QuerySequence readLine(IOLine line) {
         String data = line.getTF().getText();
@@ -63,13 +66,13 @@ public class Reader implements Initializable {
                 buffer.delete(0, buffer.length());
             }
             if(signs.containsKey(c))  {
-                QS.addQuery(new QuerySequence.Operation(signs.get(c)));
+                QS.addQuery(new QuerySequence.Operator(signs.get(c)));
                 continue;
             }
             if(c.matches("[a-zA-Z]")) {
                 StringBuilder _buffer = new StringBuilder();
                 for(int j = i; (j < data.length() && Character.toString(data.charAt(j)).matches("[a-zA-Z]")); j++) {
-                    _buffer.append(Character.toString(data.charAt(j)));
+                    _buffer.append(data.charAt(j));
                     i++;
                 }
                 i--;
@@ -84,7 +87,7 @@ public class Reader implements Initializable {
                 String c0 = Character.toString(data.charAt(i + 1));
                 if(c0.matches("\\d")) {
                     QuerySequence.ParamStatement q = new QuerySequence.ParamStatement(Integer.parseInt(c0));
-                    ((QuerySequence.ParamStatement) q).setValue(Double.parseDouble(Controller.CONTROLLER.IOLineList.get(((QuerySequence.ParamStatement) q).refIndex).getResult()));
+                    q.setValue(Double.parseDouble(Controller.CONTROLLER.IOLineList.get(q.refIndex).getResult()));
                     QS.addQuery(q);
                     i++;
                 }
@@ -96,7 +99,7 @@ public class Reader implements Initializable {
         }
         return QS;
     }
-    private String funcReader(String data) {
+/*    private String funcReader(String data) {
         String fChar = "@", result;
         for(Computer.Functions key : new ArrayList<>(Computer.COMPUTER.funcs.keySet())) {
             String name = Computer.COMPUTER.funcs.get(key);
@@ -118,7 +121,7 @@ public class Reader implements Initializable {
         }
         System.out.println(data);
         return data;
-    }
+    }*/
     public ArrayList<IOLine> updateParams(ArrayList<IOLine> inputLines_upt, int index, int bias) {
         for(int ind = 0; ind < inputLines_upt.size(); ind++) {
             if (ind > index) {

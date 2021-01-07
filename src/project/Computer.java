@@ -23,8 +23,8 @@ public class Computer extends QuerySequence {
         }
         Operation(Query v1, Query op, Query v2) {
             vLeft = v1.value;
-            opType = ((QuerySequence.Operation) op).getType();
-            priority = ((QuerySequence.Operation) op).getPriority();
+            opType = ((Operator) op).getType();
+            priority = ((Operator) op).getPriority();
             vRight = v2.value;
             queries[0] = v1;
             queries[1] = op;
@@ -120,11 +120,15 @@ public class Computer extends QuerySequence {
     }
     public Map<Operations, String> signs = new HashMap<Operations, String>();
     public Map<Functions, String> funcs = new HashMap<Functions, String>();
+    private final int iterationLim = 20;
 
     public String computeQuerySequence(QuerySequence querySequence) {
        QuerySequence QS = querySequence;
+       int loopSaver = 0;
         while(QS.getSequence().size() > 1) {
+            if(loopSaver > iterationLim) break;
             QS = computeStep(QS);
+            loopSaver++;
         }
 
         StringBuilder out = new StringBuilder();
@@ -132,19 +136,20 @@ public class Computer extends QuerySequence {
             if(q.getClass() == QuerySequence.ConstStatement.class) out.append(((((Query) q).getValue())));
             else if(q.getClass() == QuerySequence.ParamStatement.class) out.append(((((Query) q).getValue())));
             else if(q.getClass() == QuerySequence.VarStatement.class) out.append((String) (((VarStatement) q).getValue()));
-            else if(q.getClass() == QuerySequence.Operation.class) out.append(signs.get(((QuerySequence.Operation) q).getType()));
+            else if(q.getClass() == Operator.class) out.append(signs.get(((Operator) q).getType()));
         }
         return out.toString();
     }
     private QuerySequence computeStep(QuerySequence querySequence) {
         QuerySequence.debug(querySequence);
 
-
+        querySequence = computeMinuses(querySequence);
         querySequence = executeFunctionQueries(querySequence);
         ArrayList<Operation> operations = getOperationQuery(querySequence);
         Operation mostPriorityOperation = getMostPriorityOperation(operations);
 
-        replace(querySequence, mostPriorityOperation.queries, new QuerySequence.ConstStatement(mostPriorityOperation.compute()));
+        ConstStatement opRes = new QuerySequence.ConstStatement(mostPriorityOperation.compute());
+        replace(querySequence, mostPriorityOperation.queries, opRes);
         return querySequence;
     }
 
@@ -155,8 +160,8 @@ public class Computer extends QuerySequence {
         for (int i = 0; i <= querySequence.getSequence().size() - k; i++) {
             ArrayList<Query> buffer = new ArrayList<Query>();
             for (int j = i; j < i + k; j++) {
-                if (querySequence.getSequence().toArray()[j].getClass() == QuerySequence.Operation.class) {
-                    QuerySequence.Operation op = (QuerySequence.Operation) querySequence.getSequence().toArray()[j];
+                if (querySequence.getSequence().toArray()[j].getClass() == Operator.class) {
+                    Operator op = (Operator) querySequence.getSequence().toArray()[j];
                     if (op.getType() == Operations.opInc && !op.isChecked) {
                         bias += op.getPriority();
                         op.isChecked = true;
@@ -165,10 +170,11 @@ public class Computer extends QuerySequence {
                         bias -= op.getPriority();
                         op.isChecked = true;
                         i += (i < querySequence.getSequence().size() - k) ? 1 : 0;
-                    } else {
+                    }
+                    else {
                         if (j == i) break;
                         Query q = (Query) querySequence.getSequence().toArray()[j];
-                        ((QuerySequence.Operation) q).addPriority(bias);
+                        ((Operator) q).addPriority(bias);
                         buffer.add(q);
                     }
                 } else if (querySequence.getSequence().toArray()[j].getClass() == QuerySequence.VarStatement.class) {
@@ -181,7 +187,7 @@ public class Computer extends QuerySequence {
                 operationQuery.add(new Operation(buffer.get(0), buffer.get(1), buffer.get(2)));
         }
         for (Query query : querySequence.getSequence())
-            if (query.getClass() == QuerySequence.Operation.class) ((QuerySequence.Operation) query).isChecked = false;
+            if (query.getClass() == Operator.class) ((Operator) query).isChecked = false;
         for (Operation operation : operationQuery) Operation.debug(operation);
         return operationQuery;
     }
@@ -201,24 +207,53 @@ public class Computer extends QuerySequence {
         return new Operation();
     }
     private QuerySequence executeFunctionQueries(QuerySequence sequence) {
+        ArrayList<Query> QS = sequence.getSequence();
         QuerySequence args = new QuerySequence();
-        for(int i = 0; i < sequence.getSequence().size(); i++) {
-            if(sequence.getSequence().get(i).queryType == QueryType.Function) {
-                if(sequence.getSequence().get(i + 1).queryType == QueryType.Operation && ((QuerySequence.Operation)sequence.getSequence().get(i + 1)).getType() == Operations.opInc) {
-                    for(int j = i + 1; (j + 1 < sequence.getSequence().size() && !(sequence.getSequence().get(j + 1).queryType == QueryType.Operation && ((QuerySequence.Operation)sequence.getSequence().get(j + 1)).getType() == Operations.opDec)); j++) {
-                        args.addQuery(sequence.getSequence().get(j));
+        for(int i = 0; i < QS.size(); i++) {
+            int j = 0;
+            if(QS.get(i).queryType == QueryType.Function) {
+                if(QS.get(i + 1).queryType == QueryType.Operator && ((Operator)QS.get(i + 1)).getType() == Operations.opInc) {
+                    boolean flag = true;
+                    int bias = 1;
+                    for(j = i + 2; (j < QS.size() && flag); j++) {
+                        if(QS.get(j).queryType == QueryType.Operator && ((Operator) QS.get(j)).getType() == Operations.opInc)
+                            bias++;
+                        else if(QS.get(j).queryType == QueryType.Operator && ((Operator) QS.get(j)).getType() == Operations.opDec)
+                            bias--;
+                        if(bias < 1) flag = false;
+                        else args.addQuery(QS.get(j));
                     }
                 }
+                ArrayList<Query> tmp = new ArrayList<Query>(args.getSequence());
                 ConstStatement arg = new ConstStatement(Double.parseDouble(computeQuerySequence(args)));
-                ((QuerySequence.Function)sequence.getSequence().get(i)).addArg(arg);
-                ConstStatement functionResult = ((QuerySequence.Function)sequence.getSequence().get(i)).execute();
+                ((QuerySequence.Function)QS.get(i)).addArg(arg);
+                ConstStatement functionResult = ((QuerySequence.Function)QS.get(i)).execute();
 
-                sequence.removeQuery((Query[])args.getSequence().toArray());
-                sequence.removeQuery(sequence.getSequence().get(i));
+                Query[] _args = new Query[tmp.size()];
+                for(int k = 0; k < tmp.size(); k++) _args[k] = tmp.get(k);
+                sequence.removeQuery(QS.get(j - 1));
+                sequence.removeQuery(QS.get(i));
+                sequence.removeQuery(_args);
                 sequence.addQuery(i, functionResult);
             }
         }
         return sequence;
+    }
+    private QuerySequence computeMinuses(QuerySequence querySequence) {
+        int k = 1;
+        for (int i = 0; i <= querySequence.getSequence().size() - k; i++) {
+            if (querySequence.getSequence().get(i).getClass() == Operator.class) {
+                Operator op = (Operator) querySequence.getSequence().get(i);
+                if (op.getType() == Operations.sub && (i - 1 >= 0 && querySequence.getSequence().get(i - 1).getClass() == Operator.class && ((Operator) querySequence.getSequence().get(i - 1)).getType() == Operations.opInc || i == 0)) {
+                    if(querySequence.getSequence().get(i + 1).queryType == QueryType.Statement)
+                        ((Statement) querySequence.getSequence().get(i + 1)).invertValue();
+                    else if(querySequence.getSequence().get(i + 1).queryType == QueryType.Function)
+                        ((Function) querySequence.getSequence().get(i + 1)).setNegative(true);
+                    querySequence.removeQuery(querySequence.getSequence().get(i));
+                }
+            }
+        }
+        return querySequence;
     }
     private QuerySequence replace(QuerySequence sequence, Query[] queries, Query newQuery) {
         ArrayList<Query> QS = sequence.getSequence();
@@ -238,29 +273,39 @@ public class Computer extends QuerySequence {
                     j--;
                 }
             QS.add(i, newQuery);
+                try {
+                    if ((QS.get(i - 1).queryType == QueryType.Operator && ((Operator) QS.get(i - 1)).getType() == Operations.opInc) && (QS.get(i + 1).queryType == QueryType.Operator && ((Operator) QS.get(i + 1)).getType() == Operations.opDec)) {
+                        QS.remove(i - 1);
+                        QS.remove(i);
+                    }
+                }
+                catch (ArrayIndexOutOfBoundsException e) {}
         }
         for (int n = 0; n < QS.size() - 1; n++) {
-            if ((QS.get(n).queryType == QueryType.Operation) && (QS.get(n + 1).queryType == QueryType.Operation))
-                if ((((QuerySequence.Operation) QS.get(n)).getType() == Operations.opInc) && (((QuerySequence.Operation) QS.get(n + 1)).getType() == Operations.opDec)) {
+            if ((QS.get(n).queryType == QueryType.Operator) && (QS.get(n + 1).queryType == QueryType.Operator))
+                if ((((Operator) QS.get(n)).getType() == Operations.opInc) && (((Operator) QS.get(n + 1)).getType() == Operations.opDec)) {
                     sequence.removeQuery(((Query) QS.toArray()[n]));
                     sequence.removeQuery(((Query) QS.toArray()[n]));
                 } //()[0-9] query check;
         }
-        if (QS.get(0).queryType == QueryType.Operation && ((QuerySequence.Operation) QS.get(0)).getType() == Operations.opInc ) {
+        if (QS.get(0).queryType == QueryType.Operator && ((Operator) QS.get(0)).getType() == Operations.opInc ) {
             int j, bias = 1;
             boolean flag = true;
             for(j = 1; (j < QS.size() && flag); j++) {
-                if(QS.get(j).queryType == QueryType.Operation && ((QuerySequence.Operation) QS.get(j)).getType() == Operations.opInc)
+                if(QS.get(j).queryType == QueryType.Operator && ((Operator) QS.get(j)).getType() == Operations.opInc)
                     bias++;
-                boolean check = (QS.get(j).queryType == QueryType.Operation && ((QuerySequence.Operation) QS.get(j)).getType() == Operations.opDec);
+                boolean check = (QS.get(j).queryType == QueryType.Operator && ((Operator) QS.get(j)).getType() == Operations.opDec);
                 if(check) bias--;
                 if(bias < 1) flag = false;
             }
-            if(j >= QS.size() - 1) {
+            if(j >= QS.size() - 1 && (QS.get(QS.size() - 1).queryType == QueryType.Operator && ((Operator) QS.get(QS.size() - 1)).getType() == Operations.opDec)) {
                 sequence.removeQuery(QS.get(0));
                 sequence.removeQuery(QS.get(QS.size() - 1));
             }
         } //([0-9]) query check;
+        if(QS.size() < 3) {
+            for(i = 0; i < QS.size(); i++) if(QS.get(i).queryType == QueryType.Operator) QS.remove(QS.get(i));
+        }
         return sequence;
     }
 }

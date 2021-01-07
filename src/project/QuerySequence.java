@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class QuerySequence {
     protected enum QueryType{
         Statement,
-        Operation,
+        Operator,
         Function
     }
     protected enum StatementType {
@@ -37,6 +37,10 @@ public class QuerySequence {
             value = val;
             return true;
         };
+        public void invertValue() {
+            if(value.getClass() == Double.class) setValue((double)value * -1d);
+            if(value.getClass() == String.class) setValue("-" + (String)value);
+        }
     }
     public static class ConstStatement extends Statement {
         ConstStatement(double val) {
@@ -56,6 +60,11 @@ public class QuerySequence {
                 return true;
             }
             catch (Exception e) { return false; }
+        }
+
+        @Override
+        public void invertValue() {
+            setValue((double)value * -1d);
         }
     }
     public static class ParamStatement extends Statement {
@@ -93,14 +102,14 @@ public class QuerySequence {
             catch (Exception e) { return false; }
         }
     }
-    public static class Operation extends Query {
+    public static class Operator extends Query {
 
         private Computer.Operations type;
         private int priority;
         public boolean isChecked = false;
-        Operation(Computer.Operations f) {
+        Operator(Computer.Operations f) {
             setType(f);
-            queryType = QueryType.Operation;
+            queryType = QueryType.Operator;
             value = type.toString();
         }
         public void setType(Computer.Operations f) {
@@ -156,7 +165,8 @@ public class QuerySequence {
     }
     public static class Function extends Query {
         private Computer.Functions fType;
-        ArrayList<Statement> args;
+        private boolean isNegative = false;
+        ArrayList<Statement> args = new ArrayList<Statement>();
         Function(Statement arg, Computer.Functions fType) {
             this.args.add(arg);
             this.fType = fType;
@@ -167,22 +177,21 @@ public class QuerySequence {
             queryType = QueryType.Function;
         }
         public ConstStatement execute() {
-            switch (fType) {
-                case root: {
-                    if (args.get(0).getClass() == ConstStatement.class)
-                        return new ConstStatement(Math.sqrt((Double) args.get(0).getValue()));
-                    return new ConstStatement(0);
+            double result = 0d;
+            if (args.get(0).getClass() == ConstStatement.class)
+                switch (fType) {
+                    case root: {
+                        result = Math.sqrt((Double) args.get(0).getValue());
+                        break;
+                    }
+                    case lg: {
+                        result = Math.log10((Double) args.get(0).getValue());
+                        break;
+                    }
+                    default:
+                        break;
                 }
-                case lg: {
-                    if (args.get(0).getClass() == ConstStatement.class)
-                        return new ConstStatement(Math.log10((Double) args.get(0).getValue()));
-                    return new ConstStatement(0);
-
-                }
-                default:
-                    break;
-            }
-            return new ConstStatement(0);
+            return new ConstStatement(result * ((isNegative) ? -1 : 1));
         }
         public void setArgs(ArrayList<Statement> args) {
             this.args = args;
@@ -202,12 +211,17 @@ public class QuerySequence {
             }
             return false;
         }
+        public void setNegative(boolean val) { isNegative = val; }
         public void setFType(Computer.Functions fType) {
             this.fType = fType;
         }
     }
 
     private ArrayList<Query> QS = new ArrayList<Query>();
+    QuerySequence(ArrayList<Query> arg) {
+        setSequence(arg);
+    }
+    QuerySequence() {}
     public boolean setSequence(ArrayList<Query> q) {
         try {
             QS = q;

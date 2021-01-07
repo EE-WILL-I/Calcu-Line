@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Calcu-Line">
+    <output-path>$PROJECT_DIR$/out/artifacts/Calcu_Line</output-path>
+    <root id="archive" name="Calcu-Line.jar">
+      <element id="library" level="application" name="lib" />
+      <element id="module-output" name="Calcu-Line" />
+    </root>
+  </artifact>
+</component>
