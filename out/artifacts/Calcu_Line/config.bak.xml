@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+	<parameters>
+		<parameter id="000">english</parameter>
+		<parameter id="100">#</parameter>
+		<parameter id="101">&lt;&gt;</parameter>
+		<parameter id="200">-fx-border-color:#1e1e1e; -fx-text-fill:#1e1e1e; -fx-font-size:14px; -fx-pref-height:30px; -fx-pref-width:40px;</parameter>
+		<parameter id="201">-fx-background-color:#ffe712; -fx-border-color:#1e1e1e; -fx-font-size:14px; -fx-pref-height:30px;-fx-pref-width:400px;</parameter>
+		<parameter id="202">-fx-border-color:#1e1e1e; -fx-text-fill:#1e1e1e; -fx-font-size:14px; -fx-pref-height:30px; -fx-pref-width:124px;</parameter>
+		<parameter id="203">-fx-background-color:#ffe712;</parameter>
+		<parameter id="300">20</parameter>
+	</parameters>
+</configuration>

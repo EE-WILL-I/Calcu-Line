@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<localizations>
+	<localization id="english">
+		<text id="000">Input lines:</text>
+		<text id="001">Use "#N" to get value from line "N"</text>
+		<text id="002">Settings</text>
+		<text id="003">Clear</text>
+		<text id="004">Compute</text>
+		<text id="005">Settings:</text>
+		<text id="006">Current: </text>
+		<text id="007">Extraction operant: </text>
+		<text id="008">Function param operands: </text>
+		<text id="009">Language: </text>
+		<text id="010">Default</text>
+		<text id="011">Revert</text>
+		<text id="012">Apply</text>
+		<text id="013">Enter an operation...</text>
+		<text id="014">Enter a value..</text>
+		<text id="015">Variables are unsupported</text>
+		<text id="016">Function has no params</text>
+		<text id="017">Function args has no brackets</text>
+	</localization>
+	<localization id="russian">
+		<text id="000">Строки для ввода:</text>
+		<text id="001">Используйте "#N", чтобы получить значение из строки "N"</text>
+		<text id="002">Настройки</text>
+		<text id="003">Отчистить</text>
+		<text id="004">Вычислить</text>
+		<text id="005">Настройки:</text>
+		<text id="006">Текущее: </text>
+		<text id="007">Операнд извлечения: </text>
+		<text id="008">Операнды пар-ов функ-и: </text>
+		<text id="009">Язык: </text>
+		<text id="010">Сбросить</text>
+		<text id="011">Отклонить</text>
+		<text id="012">Применить</text>
+		<text id="013">Введите операцию...</text>
+		<text id="014">Введите значение..</text>
+		<text id="015">Переменные не поддерживаются</text>
+		<text id="016">Отсутствуют параметры у функции</text>
+		<text id="017">Аргументы функ-и без скобок</text>
+	</localization>
+</localizations>

@@ -220,15 +220,25 @@ public class Computer extends QuerySequence {
                     }
                 }
                 ArrayList<Query> tmp = new ArrayList<Query>(args.getSequence());
-                ConstStatement arg = new ConstStatement(Double.parseDouble(computeQuerySequence(args)));
+                ConstStatement arg;
+                try {
+                    arg = new ConstStatement(Double.parseDouble(computeQuerySequence(args)));
+                } catch (NumberFormatException e) {
+                    arg = new ConstStatement(0d);
+                    Controller.CONTROLLER.setInfo(XMLReader.READER.getTextById(Controller.CONTROLLER.localization, "015"));
+                }
                 ((QuerySequence.Function)QS.get(i)).addArg(arg);
                 ConstStatement functionResult = ((QuerySequence.Function)QS.get(i)).execute();
 
                 Query[] _args = new Query[tmp.size()];
                 for(int k = 0; k < tmp.size(); k++) _args[k] = tmp.get(k);
-                sequence.removeQuery(QS.get(j - 1));
-                sequence.removeQuery(QS.get(i));
-                sequence.removeQuery(_args);
+                try {
+                    sequence.removeQuery(QS.get(j - 1));
+                    sequence.removeQuery(QS.get(i));
+                    sequence.removeQuery(_args);
+                } catch (IndexOutOfBoundsException e) {
+                    Controller.CONTROLLER.setInfo(XMLReader.READER.getTextById(Controller.CONTROLLER.localization, "017"));
+                }
                 sequence.addQuery(i, functionResult);
             }
         }

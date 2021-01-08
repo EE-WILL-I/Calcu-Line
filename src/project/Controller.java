@@ -190,6 +190,9 @@ public class Controller implements Initializable {
         ap_settings.setDisable(true);
         ap_settings.setVisible(false);
     }
+    public void setInfo(String info) {
+        lbl_info001.setText(info);
+    }
     private void showSettings() {
         ap_main.setDisable(true);
         ap_main.setVisible(false);

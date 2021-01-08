@@ -16,6 +16,9 @@
 		<text id="012">Apply</text>
 		<text id="013">Enter an operation...</text>
 		<text id="014">Enter a value..</text>
+		<text id="015">Variables are unsupported</text>
+		<text id="016">Function has no params</text>
+		<text id="017">Function args has no brackets</text>
 	</localization>
 	<localization id="russian">
 		<text id="000">Строки для ввода:</text>
@@ -33,5 +36,8 @@
 		<text id="012">Применить</text>
 		<text id="013">Введите операцию...</text>
 		<text id="014">Введите значение..</text>
+		<text id="015">Переменные не поддерживаются</text>
+		<text id="016">Отсутствуют параметры у функции</text>
+		<text id="017">Аргументы функ-и без скобок</text>
 	</localization>
 </localizations>

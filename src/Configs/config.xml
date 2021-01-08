@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <configuration>
 	<parameters>
-		<parameter id="000">english</parameter>
+		<parameter id="000">russian</parameter>
 		<parameter id="100">#</parameter>
 		<parameter id="101">&lt;&gt;</parameter>
 		<parameter id="200">-fx-border-color:#1e1e1e; -fx-text-fill:#1e1e1e; -fx-font-size:14px; -fx-pref-height:30px; -fx-pref-width:40px;</parameter>

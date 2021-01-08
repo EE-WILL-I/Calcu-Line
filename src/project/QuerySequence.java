@@ -198,7 +198,12 @@ public class QuerySequence {
                         break;
                     }
                     case log: {
-                        result = Math.log((Double) args.get(0).getValue()) / Math.log((Double)parameters.get(0).getValue());
+                        try {
+                            result = Math.log((Double) args.get(0).getValue()) / Math.log((Double) parameters.get(0).getValue());
+                        } catch (IndexOutOfBoundsException e) {
+                            result = 0;
+                            Controller.CONTROLLER.setInfo(XMLReader.READER.getTextById(Controller.CONTROLLER.localization, "016"));
+                        }
                     }
                     default:
                         break;
