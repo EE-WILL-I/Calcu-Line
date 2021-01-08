@@ -73,23 +73,6 @@ public class Reader  {
                 QS.addQuery(new QuerySequence.Operator(signs.get(c)));
                 continue;
             }
-            if(c.matches(PARAM_CHAR)) {
-                String c0 = Character.toString(data.charAt(i + 1));
-                if(c0.matches("\\d")) {
-                    int ind = Integer.parseInt(c0);
-                    QuerySequence.ParamStatement q;
-                    if(ind >= 0 && ind <= this.inputLines.get(currentIOLIne).getLineIndex()) {
-                        q = new QuerySequence.ParamStatement(ind);
-                        q.setValue(Double.parseDouble(Controller.CONTROLLER.IOLineList.get(q.refIndex).getResult()));
-                    }
-                    else {
-                        q = new QuerySequence.ParamStatement(-1);
-                        q.setValue(0d);
-                    }
-                    QS.addQuery(q);
-                    i++;
-                }
-            }
             if(c.matches("[a-zA-Z]")) {
                 StringBuilder _buffer = new StringBuilder();
                 for(int j = i; (j < data.length() && Character.toString(data.charAt(j)).matches("[a-zA-Z]")); j++) {
@@ -112,6 +95,23 @@ public class Reader  {
                 }
                 else QS.addQuery(new QuerySequence.VarStatement(c));
                 continue;
+            }
+            if(c.matches(PARAM_CHAR)) {
+                String c0 = Character.toString(data.charAt(i + 1));
+                if(c0.matches("\\d")) {
+                    int ind = Integer.parseInt(c0);
+                    QuerySequence.ParamStatement q;
+                    if(ind >= 0 && ind <= this.inputLines.get(currentIOLIne).getLineIndex()) {
+                        q = new QuerySequence.ParamStatement(ind);
+                        q.setValue(Double.parseDouble(Controller.CONTROLLER.IOLineList.get(q.refIndex).getResult()));
+                    }
+                    else {
+                        q = new QuerySequence.ParamStatement(-1);
+                        q.setValue(0d);
+                    }
+                    QS.addQuery(q);
+                    i++;
+                }
             }
         }
         if(buffer.length() > 0) {

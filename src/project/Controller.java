@@ -1,5 +1,6 @@
 package project;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -25,11 +26,12 @@ public class Controller implements Initializable {
     @FXML
     public VBox vBox_inputArray;
     @FXML
-    public Label lbl_param00, lbl_param01, lbl_info000, lbl_info001;
+    public Label lbl_info000, lbl_info001;
     @FXML
     public Button btn_settings, btn_compute, btn_clear;
     public ArrayList<IOLine> IOLineList = new ArrayList<IOLine>();
     public String localization = "rus";
+    private ObservableList<Node> hBoxTempStorage;
     private IOLine selectedLine;
     private Reader reader;
     private XMLReader xmlReader;
@@ -41,13 +43,14 @@ public class Controller implements Initializable {
     }
 
     public void onClearBtnPressed() {
-        if(IOLineList.get(0) == selectedLine) selectedLine.clear();
-        deleteLine(selectedLine);
+        deleteAllLines();
+        addLine(0);
     }
     public void onSettingsBtnPressed() {
-        xmlReader.readConfig();
-        xmlReader.readTextData();
-        setLocalization(localization);
+//        xmlReader.readConfig();
+//        xmlReader.readTextData();
+//        setLocalization(localization);
+        showSettings();
     }
     public IOLine addLine(int index) {
         if(IOLineList.size() < maxIOLineCount) {
@@ -85,6 +88,10 @@ public class Controller implements Initializable {
             return result;
         }
         else return null;
+    }
+    public void deleteAllLines() {
+        vBox_inputArray.getChildren().removeAll(vBox_inputArray.getChildren());
+        IOLineList.removeAll(IOLineList);
     }
     public void deleteLine(int index) {
         if(index > 0) {
@@ -149,6 +156,13 @@ public class Controller implements Initializable {
         IOLine line = addLine(0);
         if(line != null) setSelected(line);
     }
+    private void showSettings() {
+        hBoxTempStorage = vBox_inputArray.getChildren();
+        deleteAllLines();
+        addLine(0);
+        IOLineList.get(0).setResult("555");
+    }
+
     private void setLocalization(String lcl) {
         Node[] textContainingNodes = new Node[]{lbl_info000, lbl_info001, btn_settings, btn_clear, btn_compute};
         for(int i = 0; i < textContainingNodes.length; i++) {
@@ -172,7 +186,7 @@ public class Controller implements Initializable {
         xmlReader.readTextData();
         reader = new Reader();
         localization = xmlReader.getParameterById("000");
-        setLocalization("rus");
+        setLocalization(localization);
     }
 
 }
