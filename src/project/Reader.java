@@ -1,14 +1,11 @@
 package project;
 
-import javafx.fxml.Initializable;
-
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
-public class Reader {
+public class Reader  {
     public static Reader READER;
 
     public Map<String, Computer.Operations> signs = new HashMap<String, Computer.Operations>();
@@ -28,11 +25,8 @@ public class Reader {
         funcs.put("ln", Computer.Functions.ln);
         funcs.put("log", Computer.Functions.log);
 
-        XMLReader reader = new XMLReader();
-        if(reader.readXMLConfig()) {
-            PARAM_CHAR = reader.getParameterById("1");
-            FUNC_PARAM_CHARS = reader.getParameterById("2");
-        }
+        XMLReader.READER.subscribe(onConfigChangedHandler);
+        readConfigs();
 
         if (READER == null) {
             READER = this;
@@ -42,8 +36,9 @@ public class Reader {
     }
     private Computer computer = new Computer();
     private ArrayList<IOLine> inputLines = new ArrayList<IOLine>();
-    private String PARAM_CHAR, FUNC_PARAM_CHARS;
+    private Consumer<Events.EventArgs> onConfigChangedHandler = (eventArgs -> {readConfigs();});
     private int currentIOLIne = 0;
+    public String PARAM_CHAR, FUNC_PARAM_CHARS;
 
     public void read(ArrayList<IOLine> inputLines) {
         this.inputLines = inputLines;
@@ -78,6 +73,23 @@ public class Reader {
                 QS.addQuery(new QuerySequence.Operator(signs.get(c)));
                 continue;
             }
+            if(c.matches(PARAM_CHAR)) {
+                String c0 = Character.toString(data.charAt(i + 1));
+                if(c0.matches("\\d")) {
+                    int ind = Integer.parseInt(c0);
+                    QuerySequence.ParamStatement q;
+                    if(ind >= 0 && ind <= this.inputLines.get(currentIOLIne).getLineIndex()) {
+                        q = new QuerySequence.ParamStatement(ind);
+                        q.setValue(Double.parseDouble(Controller.CONTROLLER.IOLineList.get(q.refIndex).getResult()));
+                    }
+                    else {
+                        q = new QuerySequence.ParamStatement(-1);
+                        q.setValue(0d);
+                    }
+                    QS.addQuery(q);
+                    i++;
+                }
+            }
             if(c.matches("[a-zA-Z]")) {
                 StringBuilder _buffer = new StringBuilder();
                 for(int j = i; (j < data.length() && Character.toString(data.charAt(j)).matches("[a-zA-Z]")); j++) {
@@ -100,23 +112,6 @@ public class Reader {
                 }
                 else QS.addQuery(new QuerySequence.VarStatement(c));
                 continue;
-            }
-            if(c.matches(PARAM_CHAR)) {
-                String c0 = Character.toString(data.charAt(i + 1));
-                if(c0.matches("\\d")) {
-                    int ind = Integer.parseInt(c0);
-                    QuerySequence.ParamStatement q;
-                    if(ind >= 0 && ind <= this.inputLines.get(currentIOLIne).getLineIndex()) {
-                        q = new QuerySequence.ParamStatement(ind);
-                        q.setValue(Double.parseDouble(Controller.CONTROLLER.IOLineList.get(q.refIndex).getResult()));
-                    }
-                    else {
-                        q = new QuerySequence.ParamStatement(-1);
-                        q.setValue(0d);
-                    }
-                    QS.addQuery(q);
-                    i++;
-                }
             }
         }
         if(buffer.length() > 0) {
@@ -171,5 +166,10 @@ public class Reader {
             }
         }
         return inputLines_upt;
+    }
+    public void readConfigs() {
+        System.out.println("reading params for " + this.getClass().toString());
+        PARAM_CHAR = XMLReader.READER.getParameterById("100");
+        FUNC_PARAM_CHARS = XMLReader.READER.getParameterById("101");
     }
 }

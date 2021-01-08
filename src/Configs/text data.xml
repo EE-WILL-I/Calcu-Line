@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<localizations>
+	<localization id="eng">
+		<text id="000">Input lines:</text>
+		<text id="001">Use "#N" to get value from line "N"</text>
+		<text id="002">Settings</text>
+		<text id="003">Clear</text>
+		<text id="004">Compute</text>
+		<text id="005">Enter an operation...</text>
+	</localization>
+	<localization id="rus">
+		<text id="000">Строки для ввода:</text>
+		<text id="001">Используйте "#N", чтобы получить значение из строки "N"</text>
+		<text id="002">Настройки</text>
+		<text id="003">Отчистить</text>
+		<text id="004">Вычислить</text>
+		<text id="005">Введите операцию...</text>
+	</localization>
+</localizations>

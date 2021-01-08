@@ -1,12 +1,12 @@
 package project;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.awt.*;
+import javafx.scene.control.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -25,10 +25,14 @@ public class Controller implements Initializable {
     @FXML
     public VBox vBox_inputArray;
     @FXML
-    public Label lbl_param0, lbl_param1;
+    public Label lbl_param00, lbl_param01, lbl_info000, lbl_info001;
+    @FXML
+    public Button btn_settings, btn_compute, btn_clear;
     public ArrayList<IOLine> IOLineList = new ArrayList<IOLine>();
+    public String localization = "rus";
     private IOLine selectedLine;
     private Reader reader;
+    private XMLReader xmlReader;
     private final int maxIOLineCount = 10;
 
     public void onComputeBtnPressed() {
@@ -37,11 +41,13 @@ public class Controller implements Initializable {
     }
 
     public void onClearBtnPressed() {
-        if((IOLine)IOLineList.toArray()[0] == selectedLine) selectedLine.clear();
+        if(IOLineList.get(0) == selectedLine) selectedLine.clear();
         deleteLine(selectedLine);
     }
     public void onSettingsBtnPressed() {
-
+        xmlReader.readConfig();
+        xmlReader.readTextData();
+        setLocalization(localization);
     }
     public IOLine addLine(int index) {
         if(IOLineList.size() < maxIOLineCount) {
@@ -143,9 +149,30 @@ public class Controller implements Initializable {
         IOLine line = addLine(0);
         if(line != null) setSelected(line);
     }
+    private void setLocalization(String lcl) {
+        Node[] textContainingNodes = new Node[]{lbl_info000, lbl_info001, btn_settings, btn_clear, btn_compute};
+        for(int i = 0; i < textContainingNodes.length; i++) {
+            String id = "";
+            for(int k = 3 - String.valueOf(i).length(); k > 0; k--) id += "0";
+            id += String.valueOf(i);
+            if(textContainingNodes[i].getClass() == Label.class) {
+                ((Label) textContainingNodes[i]).setText(xmlReader.getTextById(lcl, id));
+                if(id.equals("101")) ((Label) textContainingNodes[i]).setText(xmlReader.getTextById(lcl, String.valueOf(id)).replace("#", reader.PARAM_CHAR));
+            }
+            else if(textContainingNodes[i].getClass() == Button.class) {
+                ((Button) textContainingNodes[i]).setText(xmlReader.getTextById(lcl, id));
+            }
+        }
+        System.out.println("localization is set to '"+ lcl + "'");
+    }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        xmlReader = new XMLReader();
+        xmlReader.readConfig();
+        xmlReader.readTextData();
         reader = new Reader();
+        localization = xmlReader.getParameterById("000");
+        setLocalization("rus");
     }
 
 }

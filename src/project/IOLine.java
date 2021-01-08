@@ -7,25 +7,28 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 
+import java.util.function.Consumer;
+
 public class IOLine {
     private HBox hBox = new HBox();
     private Label lineNum = new Label(), result = new Label();
     private TextField input = new TextField();
-    private String lblStyle = "-fx-border-color:#1e1e1e; -fx-text-fill:#1e1e1e; -fx-font-size:14px; -fx-pref-height:30px;",
-            tfStyle = "-fx-background-color: #ffe712; -fx-border-color:#1e1e1e; -fx-font-size:14px; -fx-pref-height:30px;";
-    private int tfWidth = 400, lineWidth = 524;
+//    private String lblStyle = "-fx-border-color:#1e1e1e; -fx-text-fill:#1e1e1e; -fx-font-size:14px; -fx-pref-height:30px;",
+//////            tfStyle = "-fx-background-color: #ffe712; -fx-border-color:#1e1e1e; -fx-font-size:14px; -fx-pref-height:30px;";
+//////    private int tfWidth = 400, lineWidth = 524;
+    private String[] parameters = new String[4];
     private int index;
-    Node[] childrenList = {lineNum, input, result};
+    private Node[] childrenList = {lineNum, input, result};
+    private Consumer<Events.EventArgs> onConfigChangedHandler = (eventArgs -> {readConfigs();});
 
     IOLine(int index) {
+        XMLReader.READER.subscribe(onConfigChangedHandler);
+        readConfigs();
         this.index = index;
 
-        lineNum.setStyle(lblStyle + "-fx-pref-width:40px;");
         lineNum.setText(Integer.toString(index));
         lineNum.setAlignment(Pos.CENTER);
 
-        input.setStyle(tfStyle + "-fx-pref-width:" + tfWidth + "px;");
-        input.setPromptText("Enter operation..");
         input.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent e) -> {
             switch (e.getCode()) {
                 case ENTER: { Controller.CONTROLLER.addLine(this.index + 1); break; }
@@ -39,14 +42,22 @@ public class IOLine {
             Controller.CONTROLLER.setSelected(this);
         });
 
-        result.setStyle(lblStyle + "-fx-pref-width:" + (lineWidth - tfWidth) +"px;");
         result.setAlignment(Pos.CENTER);
         result.setText("0.0");
 
-        hBox.setStyle("-fx-background-color:#ffe712;");
         for (Node obj : childrenList) {
             hBox.getChildren().add(obj);
         }
+    }
+    protected void finalize() {
+        XMLReader.READER.unsubscribe(onConfigChangedHandler);
+    }
+    void setParameters() {
+        lineNum.setStyle(parameters[0]);
+        input.setStyle(parameters[1]);
+        input.setPromptText(XMLReader.READER.getTextById(Controller.CONTROLLER.localization, "005"));
+        result.setStyle(parameters[2]);
+        hBox.setStyle(parameters[3]);
     }
     void setIndex(int index) {
         this.index = index;
@@ -69,5 +80,10 @@ public class IOLine {
     void clear() {
         input.clear();
         result.setText("0");
+    }
+    public void readConfigs() {
+            for(int i = 0; i < parameters.length; i++)
+                parameters[i] = XMLReader.READER.getParameterById("20" + i);
+            setParameters();
     }
 }

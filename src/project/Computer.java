@@ -5,6 +5,7 @@ import com.sun.istack.internal.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class Computer extends QuerySequence {
 
@@ -87,6 +88,9 @@ public class Computer extends QuerySequence {
         funcs.put(Functions.lg, "lg");
         funcs.put(Functions.log, "log");
 
+        XMLReader.READER.subscribe(onConfigChangedHandler);
+        readConfigs();
+
         if (COMPUTER == null) {
             COMPUTER = this;
         } else {
@@ -110,7 +114,8 @@ public class Computer extends QuerySequence {
     }
     public Map<Operations, String> signs = new HashMap<Operations, String>();
     public Map<Functions, String> funcs = new HashMap<Functions, String>();
-    private final int MAX_ITERATION_COUNT = 20;
+    private Consumer<Events.EventArgs> onConfigChangedHandler = (eventArgs -> {readConfigs();});
+    private int MAX_ITERATION_COUNT;
 
     public String computeQuerySequence(QuerySequence querySequence) {
         int curIt = 1;
@@ -297,5 +302,9 @@ public class Computer extends QuerySequence {
             for(i = 0; i < QS.size(); i++) if(QS.get(i).queryType == QueryType.Operator) QS.remove(QS.get(i));
         }
         return sequence;
+    }
+    public void readConfigs() {
+        System.out.println("reading params for " + this.getClass().toString());
+        MAX_ITERATION_COUNT = Integer.parseInt(XMLReader.READER.getParameterById("300"));
     }
 }
