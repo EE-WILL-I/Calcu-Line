@@ -55,7 +55,7 @@ public class IOLine {
     void setParameters() {
         lineNum.setStyle(parameters[0]);
         input.setStyle(parameters[1]);
-        input.setPromptText(XMLReader.READER.getTextById(Controller.CONTROLLER.localization, "005"));
+        input.setPromptText(XMLReader.READER.getTextById(Controller.CONTROLLER.localization, "013"));
         result.setStyle(parameters[2]);
         hBox.setStyle(parameters[3]);
     }

@@ -6,31 +6,12 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #1e1e1e;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.Controller">
    <children>
-      <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="372.0" prefWidth="568.0" style="-fx-background-color: #1e1e1e;">
+      <AnchorPane fx:id="ap_main" layoutX="14.0" layoutY="14.0" prefHeight="372.0" prefWidth="568.0" style="-fx-background-color: #1e1e1e;" visible="false">
          <children>
             <ScrollPane layoutY="47.0" prefHeight="305.0" prefWidth="568.0" style="-fx-background-color: #1e1e1e;">
                <content>
                   <VBox fx:id="vBox_inputArray" prefHeight="303.0" prefWidth="566.0" style="-fx-background-color: #1e1e1e; -fx-border-color: #ffe712;">
                      <children>
-                       <!--> <HBox fx:id="hBox_inLine" prefWidth="564.0" style="-fx-background-color: #ffe712;">
-                           <children>
-                              <Label fx:id="lbl_lineNum" alignment="CENTER" prefHeight="30.0" prefWidth="40.0" style="-fx-border-color: #1e1e1e;" text="0" textAlignment="CENTER" textFill="#1e1e1e">
-                                 <font>
-                                    <Font size="17.0" />
-                                 </font>
-                              </Label>
-                              <TextField fx:id="tf_input" prefHeight="30.0" prefWidth="435.0" promptText="Enter operation.." style="-fx-background-color: #ffe712; -fx-border-color: #1e1e1e;">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
-                              <Label fx:id="lbl_result" alignment="CENTER" prefHeight="30.0" prefWidth="90.0" style="-fx-border-color: #1e1e1e;" text="result" textFill="#1e1e1e">
-                                 <font>
-                                    <Font size="17.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </HBox><!-->
                      </children></VBox>
                </content>
             </ScrollPane>
@@ -49,5 +30,75 @@
             <Button fx:id="btn_settings" layoutX="299.0" layoutY="15.0" mnemonicParsing="false" onAction="#onSettingsBtnPressed" prefHeight="24.0" prefWidth="85.0" style="-fx-background-color: #1e1e1e; -fx-border-color: #ffe712;" text="settings" textFill="#ffe712" />
          </children>
       </AnchorPane>
+      <AnchorPane fx:id="ap_settings" layoutX="15.0" layoutY="21.0" prefHeight="343.0" prefWidth="568.0">
+         <children>
+            <ScrollPane layoutX="-1.0" layoutY="40.0" prefHeight="305.0" prefWidth="568.0" style="-fx-background-color: #1e1e1e;">
+               <content>
+                  <VBox fx:id="vBox_parametersArray" prefHeight="303.0" prefWidth="566.0" style="-fx-background-color: #1e1e1e; -fx-border-color: #ffe712;">
+                     <children>
+                        <HBox fx:id="hBox_inLine" prefWidth="564.0" style="-fx-background-color: #ffe712;">
+                           <children>
+                              <Label fx:id="lbl_param00" alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="212.0" style="-fx-border-color: #1e1e1e;" text="Extraction operand:" textAlignment="CENTER" textFill="#1e1e1e">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="tf_param00_input" prefHeight="30.0" prefWidth="172.0" promptText="Enter value.." style="-fx-background-color: #ffe712; -fx-border-color: #1e1e1e;">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Label fx:id="lbl_param00_val" alignment="CENTER" prefHeight="30.0" prefWidth="180.0" style="-fx-border-color: #1e1e1e;" text="Current:" textFill="#1e1e1e">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="hBox_inLine1" layoutX="11.0" layoutY="11.0" prefWidth="564.0" style="-fx-background-color: #ffe712;">
+                           <children>
+                              <Label fx:id="lbl_param01" alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="212.0" style="-fx-border-color: #1e1e1e;" text="Function param operands:" textAlignment="CENTER" textFill="#1e1e1e">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="tf_param01_input" prefHeight="30.0" prefWidth="172.0" promptText="Enter value.." style="-fx-background-color: #ffe712; -fx-border-color: #1e1e1e;">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Label fx:id="lbl_param01_val" alignment="CENTER" prefHeight="30.0" prefWidth="180.0" style="-fx-border-color: #1e1e1e;" text="Current:" textFill="#1e1e1e">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="hBox_inLine11" layoutX="11.0" layoutY="41.0" prefWidth="564.0" style="-fx-background-color: #ffe712;">
+                           <children>
+                              <Label fx:id="lbl_param02" alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="212.0" style="-fx-border-color: #1e1e1e;" text="Language:" textAlignment="CENTER" textFill="#1e1e1e">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                              <ChoiceBox fx:id="cb_language" prefHeight="30.0" prefWidth="172.0" style="-fx-background-color: #ffe712; -fx-border-color: #1e1e1e;" />
+                              <Label fx:id="lbl_param02_val" alignment="CENTER" prefHeight="30.0" prefWidth="180.0" style="-fx-border-color: #1e1e1e;" text="Current:" textFill="#1e1e1e">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </content></ScrollPane>
+            <Label fx:id="lbl_info002" layoutX="14.0" layoutY="4.0" prefHeight="31.0" prefWidth="144.0" text="Settings:" textFill="#ffe712">
+               <font>
+                  <Font size="16.0" />
+               </font></Label>
+            <Button fx:id="btn_apply" layoutX="476.0" layoutY="8.0" mnemonicParsing="false" onAction="#onApplyBtnPressed" prefWidth="85.0" style="-fx-background-color: #1e1e1e; -fx-border-color: #ffe712;" text="apply" textFill="#ffe712" />
+            <Button fx:id="btn_revert" layoutX="387.0" layoutY="8.0" mnemonicParsing="false" onAction="#onRevertBtnPressed" prefWidth="85.0" style="-fx-background-color: #1e1e1e; -fx-border-color: #ffe712;" text="revert" textFill="#ffe712" />
+            <Button fx:id="btn_default" layoutX="298.0" layoutY="8.0" mnemonicParsing="false" onAction="#onDefaultBtnPressed" prefWidth="85.0" style="-fx-background-color: #1e1e1e; -fx-border-color: #ffe712;" text="default" textFill="#ffe712" />
+         </children></AnchorPane>
    </children>
 </AnchorPane>
