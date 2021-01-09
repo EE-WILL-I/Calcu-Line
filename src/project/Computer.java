@@ -37,12 +37,6 @@ public class Computer extends QuerySequence {
         }
 
         public Query compute() {
-//            if (vLeft.getClass() == String.class && vRight.getClass() == Double.class) {
-//                vLeft = 0d;
-//            }
-//            else if (vLeft.getClass() == Double.class && vRight.getClass() == String.class) {
-//                vRight = 0d;
-//            }
             if (vLeft.getClass() == Double.class && vRight.getClass() == Double.class) {
                 double v1, v2;
                 v1 = (double) vLeft;
@@ -84,9 +78,8 @@ public class Computer extends QuerySequence {
         signs.put(Operations.opDec, ")");
         signs.put(Operations.power, "^");
 
-        funcs.put(Functions.root, "sqrt");
-        funcs.put(Functions.lg, "lg");
-        funcs.put(Functions.log, "log");
+        for(Functions f : Functions.values())
+            funcs.put(f, f.name());
 
         XMLReader.READER.subscribe(onConfigChangedHandler);
         readConfigs();
@@ -107,10 +100,16 @@ public class Computer extends QuerySequence {
         power
     }
     public enum Functions {
-        root,
+        sqrt,
         lg,
         log,
-        ln
+        ln,
+        sin,
+        cos,
+        tg,
+        arcsin,
+        arccos,
+        arctg
     }
     public Map<Operations, String> signs = new HashMap<Operations, String>();
     public Map<Functions, String> funcs = new HashMap<Functions, String>();

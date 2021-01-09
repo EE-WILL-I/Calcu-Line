@@ -20,10 +20,8 @@ public class Reader  {
         signs.put(")", Computer.Operations.opDec);
         signs.put("^", Computer.Operations.power);
 
-        funcs.put("sqrt", Computer.Functions.root);
-        funcs.put("lg", Computer.Functions.lg);
-        funcs.put("ln", Computer.Functions.ln);
-        funcs.put("log", Computer.Functions.log);
+        for(Computer.Functions f : Computer.Functions.values())
+            funcs.put(f.name(), f);
 
         XMLReader.READER.subscribe(onConfigChangedHandler);
         readConfigs();

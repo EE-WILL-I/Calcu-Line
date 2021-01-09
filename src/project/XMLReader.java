@@ -25,7 +25,7 @@ public class XMLReader {
             throw new RuntimeException("Cannot open xml reader");
         }
     }
-    private final String PATH_TO_CONFIG = "src/configs/config.xml", PATH_TO_BACKUP = "src/configs/config.bak.xml", PATH_TO_TEXT_DATA = "src/configs/text data.xml";
+    private final String PATH_TO_CONFIG = "src/configs/config.xml", PATH_TO_BACKUP = "src/configs/config.bak.xml", PATH_TO_TEXT_DATA = "src/configs/text data.xml"; //only xml names for exe
     private Events.Event onConfigChanged = new Events.Event(), onTextDataChanged = new Events.Event();
 
     private Document document_config, document_textData;

@@ -185,7 +185,7 @@ public class QuerySequence {
             double result = 0d;
             if (args.get(0).getClass() == ConstStatement.class)
                 switch (fType) {
-                    case root: {
+                    case sqrt: {
                         result = Math.sqrt((Double) args.get(0).getValue());
                         break;
                     }
@@ -200,10 +200,41 @@ public class QuerySequence {
                     case log: {
                         try {
                             result = Math.log((Double) args.get(0).getValue()) / Math.log((Double) parameters.get(0).getValue());
+                            break;
                         } catch (IndexOutOfBoundsException e) {
                             result = 0;
                             Controller.CONTROLLER.setInfo(XMLReader.READER.getTextById(Controller.CONTROLLER.localization, "016"));
                         }
+                    }
+                    case sin:
+                    {
+                        result = Math.sin((Double) args.get(0).getValue());
+                        break;
+                    }
+                    case cos:
+                    {
+                        result = Math.cos((Double) args.get(0).getValue());
+                        break;
+                    }
+                    case tg:
+                    {
+                        result = Math.tan((Double) args.get(0).getValue());
+                        break;
+                    }
+                    case arcsin:
+                    {
+                        result = Math.asin((Double) args.get(0).getValue());
+                        break;
+                    }
+                    case arccos:
+                    {
+                        result = Math.acos((Double) args.get(0).getValue());
+                        break;
+                    }
+                    case arctg:
+                    {
+                        result = Math.atan((Double) args.get(0).getValue());
+                        break;
                     }
                     default:
                         break;

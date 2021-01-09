@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -29,8 +30,8 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("UI.fxml").toExternalForm());
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Calcu-Line");
-        //primaryStage.getIcons().add(new Image("sample/translator_icon.png"));
+        primaryStage.setTitle("Calcu-Line 1.6");
+        primaryStage.getIcons().add(new Image("project/Calcu-Line.png"));
         primaryStage.setResizable(false);
         Controller controller = loader.getController();
         primaryStage.setOnShown(e -> {
